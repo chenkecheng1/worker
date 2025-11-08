@@ -60,10 +60,49 @@ Cloudflare Worker 基于 `graphql-yoga` 暴露 `/graphql`，提供 `Query.ping` 
    - 部署完成后获得 `https://<name>.workers.dev/graphql`
    - 如需修改名称、兼容日期，请编辑 `wrangler.toml`
 
-7. **绑定自定义域（可选）**
-   - Dashboard → Workers → 服务 → Settings → Triggers → Custom Domains
-   - 添加如 `api.example.com`，按提示配置 DNS
-   - 前端 `VITE_GRAPHQL_ENDPOINT` 指向 `https://api.example.com/graphql`
+7. **绑定自定义域（解决域名冲突）**
+
+   **⚠️ 重要：** 如果前端已经使用 `fhjkl.online`，Worker 需要使用子域名（如 `api.fhjkl.online`）避免冲突。
+
+   **方法1：通过 Cloudflare Dashboard（推荐）**
+   
+   1. 登录 Cloudflare Dashboard
+   2. 进入 **Workers & Pages**（不是单独的 Workers）
+   3. 点击你的 Worker 服务名称（`graphql-chat-worker`）
+   4. 点击 **Settings** 标签
+   5. 滚动到 **Triggers** 部分
+   6. 找到 **Routes** 或 **Custom Domains** 选项
+   7. 点击 **Add Route** 或 **Add Custom Domain**
+   8. 输入路由模式：`api.fhjkl.online/*` 或直接添加域名 `api.fhjkl.online`
+   9. 选择 Zone：`fhjkl.online`
+   10. 保存后，Cloudflare 会自动配置 DNS（如果没有配置，需要手动添加 CNAME 记录）
+
+   **方法2：使用命令行**
+   
+   ```bash
+   # 查看当前路由
+   npx wrangler routes list
+   
+   # 如果需要，可以使用 wrangler 命令添加路由
+   # 但通常通过 Dashboard 更直观
+   ```
+
+   **方法3：在 wrangler.toml 中配置（需要 zone_id）**
+   
+   如果知道 zone_id，可以在 `wrangler.toml` 中添加：
+   ```toml
+   routes = [
+     { pattern = "api.fhjkl.online/*", zone_name = "fhjkl.online" }
+   ]
+   ```
+   
+   然后重新部署：`npm run deploy`
+
+   **配置前端环境变量**
+   
+   在前端项目的 Cloudflare Pages 设置中，添加环境变量：
+   - Key: `VITE_GRAPHQL_ENDPOINT`
+   - Value: `https://api.fhjkl.online/graphql`
 
 8. **日志与排查**
    - 本地：`npm run dev -- --log-level debug`

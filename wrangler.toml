@@ -4,3 +4,11 @@ compatibility_date = "2024-02-08"
 
 [vars]
 OPENAI_MODEL = "gpt-4o-mini"
+
+# 绑定自定义域名（子域名 api.fhjkl.online）
+# 
+# 如果域名 fhjkl.online 已经在 Cloudflare 管理，取消下面的注释即可
+# 然后运行 npm run deploy 重新部署，路由会自动生效
+routes = [
+  { pattern = "api.fhjkl.online/*", zone_name = "fhjkl.online" }
+]
