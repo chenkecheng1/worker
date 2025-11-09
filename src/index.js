@@ -15,6 +15,9 @@ const callOpenAI = async (prompt, env) => {
   const response = await fetch(target, {
     method: 'POST',
     headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
